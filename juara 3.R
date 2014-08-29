@@ -1,6 +1,4 @@
- setwd("C:\\Users\\m_lu0002\\Dropbox\\mengluchu\\bfast")
-a<-c(1,2,2,2,2,3)
- save(a,file='a.R')
+
  library(scidb)
 library(xts)
 library(zoo)
@@ -237,7 +235,7 @@ evi6<-array(ib,c(150,150,636))
 evi7<-aperm (evi6,c(2,1,3)) #rotate # new second array
 save(evi7,file='evi2n.Rdata')
 as.numeric(evi7[12,1,])-eviinus6[12,1,][]$evi2
- 
+ s
 ib<-inus6[1:150,1:150,][]$ndvi
 inuse6na<-array(ib,c(150,150,636))
 #inuse6na<-array(ia,c(200,200,636))
@@ -364,7 +362,7 @@ nbt<-c()
 i4=1
 timeused<-0
  
-
+ 
 ar520tt<-array(,c(43,41,167)) #havent run
 ar520ss<-array(,c(43,41,167))
 a2<-a1[39:635]
@@ -461,6 +459,218 @@ ar520ss[bptWT[i3],bptWT2[i3],date.seasonal2]<-500
 }
 save(ar520tt,file='ar520tt.RData')
 save(ar520ss,file='ar520ss.RData')
+
+#####
+i4=1
+pv1t2<-array(,c(150,150))  
+pv1s2<-array(,c(150,150))
+for (i in 1:150)
+{  
+  for (j in 1:150)
+  { 
+  
+    spt1<-evi7[i,j,] 
+    
+    spt<-zoo(as.numeric(spt1),a1)
+    monmean2 <- aggregate(spt, as.Date(as.yearmon(a1)), mean) #should aggregate in SciDB
+    
+    frequency(monmean2)<-12
+    na.new <- function(x) ts(na.exclude(x), frequency = 12)
+    
+    stlmon<-stl(monmean2, na.action = na.new, s.window = "per")
+    datamon <- ts(rowSums(stlmon$time.series)) 
+    tsp(datamon) <- tsp(stlmon$time.series)
+    
+    fitmon <- bfast(datamon,h=0.15, season="harmonic", max.iter=3) 
+    
+    pv1t2[i,j ]<-fitmon$output[[1]]$pvaluet$p.value
+    pv1s2[i,j ]<-fitmon$output[[1]]$pvalues$p.value
+    print(i4)
+    
+  
+    i4=i4+1
+    
+  }
+}
+save( pv1t2,file='pv1t2.RData')
+save( pv1s2,file='pv1s2.RData')
+ bfast
+pv1t<-array(,c(150,150))  
+pv1s<-array(,c(150,150))
+ 
+
+load('evi2n.Rdata')
+load("a1.Saved") 
+
+ ##############
+
+ 
+ 
+i4=1
+
+ops<-array(,c(150,150))  
+opt<-array(,c(150,150))
+which(!is.na(opt), arr.ind=TRUE)
+for (i in 1:1305)
+{  
+
+    spt1<-evi7[i1,j1,] 
+    spt<-zoo(as.numeric(spt1),a1)
+    monmean2 <- aggregate(spt, as.Date(as.yearmon(a1)), mean) #should aggregate in SciDB
+    frequency(monmean2)<-12
+    na.new <- function(x) ts(na.exclude(x), frequency = 12)
+    stlmon<-stl(monmean2, na.action = na.new, s.window = "per")
+    datamon <- ts(rowSums(stlmon$time.series)) 
+    tsp(datamon) <- tsp(stlmon$time.series)
+      
+    fitmon <- bfast(datamon,h=0.15, season="harmonic", max.iter=3) 
+    #jpeg(paste(i4,'loc.p-value1.jpg '), height=4, width=7, res=400,unit="in")
+    plot(fitmon,main='where p-value filtered') 
+    #dev.off()
+    print(i4)
+    if(fitmon$nobp$Vt==FALSE)
+    {
+      opt[i1,j1 ]<-100
+    }
+    if(fitmon$nobp$Wt==FALSE)
+    {
+      ops[i1,j1 ]<-500       
+    }
+    i4=i4+1    
+  }
+save(opt,file='opt.RData')
+save(ops,file='ops.RData')
+ 
+
+                             #373 points changed in bfast why
+############################################################ 
+i4=1
+#fops<-array(,c(150,150))  
+#fopt<-array(,c(150,150))
+pv1stest<-array(,c(150,150))
+pv1ttest<-array(,c(150,150))
+fops1<-array(,c(150,150))
+fopt1<-array(,c(150,150))
+for (i in 1:1305)
+{  
+  
+ 
+  i1<-fil.plt[i,1]
+  j1<-fil.plt[i,2]
+  spt1<-evi7[i1,j1,] 
+  
+  spt<-zoo(as.numeric(spt1),a1)
+  monmean2 <- aggregate(spt, as.Date(as.yearmon(a1)), mean) #should aggregate in SciDB
+  
+  frequency(monmean2)<-12
+  na.new <- function(x) ts(na.exclude(x), frequency = 12)
+  
+  stlmon<-stl(monmean2, na.action = na.new, s.window = "per")
+  datamon <- ts(rowSums(stlmon$time.series)) 
+  tsp(datamon) <- tsp(stlmon$time.series)
+  
+  fitmon <- bfast(datamon,h=0.15, season="harmonic", max.iter=3) 
+  #fitmon <- bfast3(datamon,h=0.15, season="harmonic", max.iter=3,pvat=filtered.pv1t,pvas=filtered.pv1s,ijk=fil.pl2[i]) 
+  #jpeg(paste(i4,'loc.fil.p-value1.jpg '), height=4, width=7, res=400,unit="in")
+ # plot(fitmon,main='where p-value filtered') 
+  #dev.off()
+  print(i4)
+  
+  #if(fitmon$nobp$Vt==FALSE)
+  #{
+    
+  #  fopt1[i1,j1 ]<-100
+  #  pv1ttest[i1,j1 ]<-fitmon$output[[1]]$pvalues$p.value 
+  
+  #}
+ 
+  if(fitmon$nobp$Wt==FALSE)
+  {
+    
+    fops1[i1,j1 ]<-500
+    pv1stest[i1,j1 ]<-fitmon$output[[1]]$pvaluet$p.value 
+ 
+  }
+  
+  i4=i4+1
+  
+}
+##########################################################
+save(fopt1,file='fopt1.RData')
+save(fops1,file='fops1.RData')
+
+fpv1t<-pfilter1(pv1t2,0.05)
+fpv1s<-pfilter1(pv1s2,0.05)
+
+filtered.pv1t<-fpv1t[[1]]
+filtered.pv1s<-fpv1s[[1]]
+keeptrack.pv1t<-fpv1t[[2]]
+keeptrack.pv1s<-fpv1s[[2]]
+ 
+fil.plt<-which(keeptrack.pv1t==2.0,arr.ind=TRUE) #seasonality
+fil.pls<-which(keeptrack.pv1s==2.0,arr.ind=TRUE) #trend
+fil.plt1<-which(keeptrack.pv1t==2.0) #seasonality
+fil.pls1<-which(keeptrack.pv1s==2.0)
+
+match(which(  pv1s2[fil.pls1]<=0.05),letmeknow2)
+length(which(  pv1s2[fil.pls1]<=0.05))
+which(pv1s2[which(is.na(match(fil.pls1,letmeknow2)))]<=0.05)
+length(which(  pv1s2[fil.pls1]<=0.05))
+#filtered.pv1t[which(keeptrack.pv1t==2.0)]<0.05
+#110              filtered p-value less than 0.05
+length(which(pv1t2     <=0.05)) 
+ #110 < 0.05
+
+################################################################
+pfilter1 <-function(a,val=0.05)
+{
+   b<-a
+  row<-length(a[,1])-1
+  col<-length(a[,2])-1
+  for (i in 2:col)
+    {
+   for (j in 2:row)    
+   {
+   
+    middle=a[i,j]
+    ih<-i+1
+    il<-i-1
+    
+    jh<-j+1
+    jl<-j-1
+ 
+    neimax<-max(c(
+      a[ih,jh ], a[il,jh ], a[i,jh ], 
+      a[ih,jl ], a[il,jl], a[i,jl], 
+      a[ih,j],    a[il,j] ))
+    
+    neimin<-min(c(
+      a[ih,jh ], a[il,jh ], a[i,jh ], 
+      a[ih,jl ], a[il,jl], a[i,jl], 
+      a[ih,j],    a[il,j]) )
+    neimedian<-median(c(
+      a[ih,jh ], a[il,jh ], a[i,jh ], 
+      a[ih,jl ], a[il,jl], a[i,jl], 
+      a[ih,j],    a[il,j]) )
+    
+    if (middle>=neimax+val | middle <= neimin-val )
+    {
+      b[i,j]<-2  
+      a[i,j]<-neimedian
+    }
+  }
+  }
+  a[ which(a==0)]<-NA
+  return(list(a,b))
+  
+}
+
+
+
+
+
+
+
 
 setwd()
 which(!is.na(ar520t),arr.ind=TRUE)
@@ -863,12 +1073,12 @@ a<-c()
 neighborsum8<-function(a)
 {
   
-  index1<-which(a!=0,arr.ind=TRUE)
-  
-  
+  index1<-which(!is.na(a),arr.ind=TRUE)
+a[ which(is.na(a))]<-0
+
   for (i1 in (1:dim(index1)[1]))
   {
-    
+     
     i<-as.integer(index1[i1,1]) 
     
     j<-as.integer(index1[i1,2]) 
@@ -900,25 +1110,26 @@ neighborsum8<-function(a)
     
     
     asum<-sum(
-      a[ih,j,t],a[il,j,t],a[i,jh,t],a[i,jh,t],a[ih,jh,t],a[il,jl,t],a[il,jh,t],a[ih,jl,t],
-      a[ih,j,tl],a[il,j,tl],a[i,jh,tl],a[i,jh,tl],a[ih,jh,tl],a[il,jl,tl],a[il,jh,tl],a[ih,jl,tl],
-      a[ih,j,th],a[il,j,th],a[i,jh,th],a[i,jh,th],a[ih,jh,th],a[il,jl,th],a[il,jh,th],a[ih,jl,th])
+      a[ih,j,t], a[il,j,t], a[i,jh,t], a[i,jl,t], a[ih,jh,t], a[il,jl,t], a[il,jh,t], a[ih,jl,t],
+      a[ih,j,tl],a[il,j,tl],a[i,jh,tl],a[i,jl,tl],a[ih,jh,tl],a[il,jl,tl],a[il,jh,tl],a[ih,jl,tl],
+      a[ih,j,th],a[il,j,th],a[i,jh,th],a[i,jl,th],a[ih,jh,th],a[il,jl,th],a[il,jh,th],a[ih,jl,th])
     if (asum==0)
     {
-      a[i,j,t]<-0.01
-      print(c(i,j,t))
-      
-      print(asum)
+      a[i,j,t]<-NA
+  
     }
   }
+a[ which(a==0)]<-NA
   return(a)   
 }
+ 
 testing5558<-array(,c(100,100,167))
 testing5558<-neighborsum8(testing5)
 summary(testing5558)
 
-
-
+ aaaa<-neighborsum8(test4ndt)
+  
+length(aaaa[!is.na(aaaa)])
 
 
 ###
@@ -1126,7 +1337,7 @@ it[1]:it[12]
  
 ##############################deter polygoy and bfast ######################################
 ex42<-extent(c( 366971.9, 403203.4, 8811367 ,8845732) ) # extent for the 150 by 150 array
-
+plot(modis.mt52, add=TRUE,col='gold')
 plot(ex42)
 as(spatialPolygons, "SpatialGrid")
 ?SpatialGrids
@@ -1139,8 +1350,10 @@ str(mevi2t) #150by150 media
 
 #for (vp in 45:167)
 #{
-  
-  change7<-which(!is.na(mevi2t[,, ]),arr.ind=TRUE)
+#  load("mevi2t.Rdata")
+bfastchangepoint<- function(changearray)
+{  
+change7<-which(!is.na(changearray[,, ]),arr.ind=TRUE) #0.05
  
 xct1<-change7[,1]+58929
 xct2<-change7[,1] 
@@ -1148,8 +1361,7 @@ xct2<-change7[,1]
 yct1<-change7[,2]+48210
 yct2<-change7[,2] 
 alltct1<-change7[,3]
-alltct1 
-#
+ 
 dfallxyt<-as.data.frame(cbind(xct2,yct2,alltct1))
 names(dfallxyt)<-c('x','y','t')
  
@@ -1162,6 +1374,11 @@ spmodist51<-SpatialPoints(coordinates(changeinmot0.5.1))
 proj4string(spmodist51)<-'+proj=sinu +lon_0=0 +x_0=0 +y_0=0 +a=6371007.181 +b=6371007.181 +units=m +no_defs'
 
 modis.mt52<-spTransform(spmodist51,CRS("+proj=utm +zone=21 +south"))
+return(modis.mt52)
+}
+modis.mt52<-bfastchangepoint(test4ndt)
+load('test4ndt.Rdata')
+###################################################################
 over(modis.mt52,deterpoints)
 
 
@@ -1194,7 +1411,7 @@ names(dfcomo)<-c('x','y')
 coordinates(dfcomo)<-~x+y
 tttt<-over(dfcomo,dfallxyt)
 tttt1<-time(monmean)[tttt$t]
- 
+ load('monmean')
 # get polygon time
 
 o1<-over(modis.mt52,spatialPolygons)
@@ -1218,7 +1435,7 @@ dutd2<-as.Date(td, '%Y-%m-%d')
 ################## plot bfast and deter time 
 
 #save(tttt1,file='tttt1')
-
+load('tttt1.Rdata')
 bf1<-as.integer(tttt1)
 dt1<-as.integer(dutd2)
 bdt<-as.data.frame(cbind(bf1,dt1))
@@ -1233,15 +1450,22 @@ for(i in 1:length(tzbdt))
 
 str(zerodist(bdt) )
 unre2<-as.numeric(dimnames(tzbdt)[[1]])
-bdt[unre2]@coords[,2]
+deter<-jitter(bdt[unre2]@coords[,2],amount=0)
+bfast<-jitter(bdt[unre2]@coords[,1],amount=0)
+deter<- bdt[unre2]@coords[,2] 
+bfast<- bdt[unre2]@coords[,1] 
 max(tzbdt2)
-jpeg('bvs.d.cex2.jpg', height=12, width=12, res=400,unit="in")
-plot(bdt[unre2]@coords[,1],bdt[unre2]@coords[,2],xlab='bfast time (seasonality)' ,pch=4,cex=tzbdt2/5,ylab='deter time',ylim=c(11500,16000),xlim=c(11500,16000))
- 
+#jpeg('bvs.d.cex2.jpg', height=12, width=12, res=400,unit="in")
+plot(bfast,deter,xlab='bfast time (seasonality)' ,pch=4,,cex=tzbdt2/5,ylab='deter time',ylim=c(11500,16000),xlim=c(11500,16000))
+ hexbinplot(deter~bfast,aspect = 1,
+shape=10,ylim=c(11500,16000),xlim=c(11500,16000))
+plot(hex)
+hexbinplot(hedb)
+hedb<-hexbin(bfast,deter)
 abline(a=0,b=1,col='red')
 legvals<-c(1,5,10,15,20,25)
 legend('bottomright',legend=legvals,pch=4,pt.cex=legvals/5,title='number of points',cex=0.8)
-dev.off()
+#dev.off()
 #dbf2<-bf1[order(bf1)]
 #dt2<-dt1[order(dt1)]
  
@@ -1384,6 +1608,7 @@ spatialPolygons <- SpatialPolygons(polygons)
 setwd( "C:/Users/m_lu0002/Desktop/Climate/minnesota/juara/deter") 
 save(spatialPolygons,file='Spatial1.R')
 load('Spatial1.R')
+ 
 
 extent(spatialPolygons)
 plot(spatialPolygons[!is.na(over(spatialPolygons, modis.mt52))])
@@ -1622,4 +1847,6 @@ load('a1.saved')
 load('ndviallr.saved')
 load('ar520tt.RData')
 load('monmean')
-#setwd("C:/Users/m_lu0002/Desktop/Climate/minnesota")
+load('test3nds.Rdata')
+
+setwd("C:/Users/m_lu0002/Desktop/Climate/minnesota")

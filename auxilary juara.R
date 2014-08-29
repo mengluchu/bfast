@@ -6,31 +6,39 @@ x<-c(58930:59079)
 y<-c(48210:48369)
 #spatialPolygons
 #42*40
-x<-c(59139:59180)
-y<-c(48713:48752)
-cosp3<-cosp2[-1,]
-cosp3[,1]+59138
-c(59138:59180)
-c(48712:48753)
+
+ 
+#c(59138:59180)
+#c(48712:48753)
 #x<-c(round(ex42@xmin):round(ex42@xmax))
 #y<-c(round(ex42@ymin):round(ex42@ymax))
 
+## deter polygons to deter points
+x<-c(59139:59180)
+y<-c(48713:48752)
+deterpolygontopoint<-function(x,y) {
 x1<-rep(x,each=length(y))
 y1<-rep(y,length(x))
-x
+ 
 xyd<-as.data.frame(cbind(x1,y1))
 xyc<-getxyMatrix(xyd,231.6564)
 xyc<-as.data.frame(xyc)
 coordinates(xyc)<-~x+y
 SpatialPoints(xyc)
 as.character(round(unique(xyc@coords[,2])))
+
 proj4string(xyc)<-'+proj=sinu +lon_0=0 +x_0=0 +y_0=0 +a=6371007.181 +b=6371007.181 +units=m +no_defs'
 xycs<-spTransform(xyc,CRS("+proj=utm +zone=21 +south  +ellps=WGS84 "))
 plot(spatialPolygons)
 deterpoints<-xycs[spatialPolygons,]
- 
- 
-length(spatialPolygons)
+plot(xycs,add=TRUE) 
+return(deterpoints)
+}
+deterpoints<-deterpolygontopoint(x,y)
+deterpoints
+modis.mt52<-bfastchangepoint(test4ndt)
+load('test5ndt.Rdata')
+modis.mt52<-bfastchangepoint(test5ndt)
 deterpoints2<-c()
 tl=0
 for ( m in  1:155)
@@ -39,14 +47,59 @@ for ( m in  1:155)
  # tl<-tl+(length(unique(xycs[spatialPolygons[m],][modis.mt52,]@coords))/2
   tl<-tl+(length(xycs[spatialPolygons[m],][is.na(over(xycs[spatialPolygons[m],],modis.mt52))]@coords))/2 
 }
- 
+tl2=0
+for ( m in  1:155)
+{
+  
+  # tl<-tl+(length(unique(xycs[spatialPolygons[m],][modis.mt52,]@coords))/2
+  tl2<-tl2+(length(xycs[spatialPolygons[m],][!is.na(over(xycs[spatialPolygons[m],],modis.mt52))]@coords))/2 
+}
 
+ 
+tl # 1328 797
 #in bfast 1175
-length(over(deterpoints,modis.mt52)) #1898
-length(which(!is.na(over(deterpoints,modis.mt52)))) #997
-length(unique(deterpoints[is.na(over(deterpoints,modis.mt52))]@coords))/2 #901
-length(unique(modis.mt52[is.na(over(modis.mt52,deterpoints))]@coords))/2 #5381 /4061
-length(unique(modis.mt52[!is.na(over(modis.mt52,deterpoints))]@coords))/2 #1400/997
+b9<-length(modis.mt52)
+b1<-length( deterpoints) #1898
+b2<-length(which(!is.na(over(deterpoints,modis.mt52)))) #997
+b3<-length(unique(deterpoints[is.na(over(deterpoints,modis.mt52))]@coords))/2  
+
+b4<-length(unique(deterpoints[!is.na(over(deterpoints,modis.mt52))]@coords))/2  
+b5<-length(unique(modis.mt52[is.na(over(modis.mt52,deterpoints))]@coords))/2 #5381 /4061
+b6<-length(unique(modis.mt52[!is.na(over(modis.mt52,deterpoints))]@coords))/2  
+b7<-length(which(!is.na(over(modis.mt52,deterpoints)))) #1400/997
+b8<-length(which(is.na(over(modis.mt52,deterpoints))))
+
+paste('total deter points:', b1, 'deterpoints in bfast:', tl2, 'deterpoints not in bfast', tl,'unique deter point not in bfast:',b3,
+      'unique deter points in bfast',b4, 'unique bfast points not in deter', b5, 'unique bfast in deter',b6,'bfast points in deter:',b7,
+      'bfast points not in deter',b8,'total bfast',b9, sep='        ')
+
+
+TP = c(b7,b6, tl2)
+FN=c(tl, b3)
+FP=c( b8, b5)
+P=TP[1:2]+FN
+N=22500-P
+TN=N-FP
+ALL=22500
+ 
+Precition =TP /(TP+FP)
+Sensitivity = TP/P 
+Specifcity = TN/N
+Accuracy= (TP+TN)/ ALL
+
+paste( 'TP',TP[1],TP[2],TP[3],
+       'FN',FN[1],FN[2],
+       'FP', FP[1],FP[2],
+       'P',P[1],P[2],
+       'N',N[1],N[2],
+       'TN',TN[1],TN[2],
+       
+       'Precition', Precition[1],  Precition[2],
+       'Sensitivity', Sensitivity[1],Sensitivity[2],
+      ' Specificity', Specificity[1] ,Specificity[2],
+      'accuracy',sep=',  ')
+
+modis.mt52
 #number: 1898 tl:4250 the  way to account for the replication of the polygons would be to do the intercection one polygon by one polygon 
 spatialPolygons[xycs,]
 length(spatialPolygons[xycs,])
