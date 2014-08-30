@@ -281,6 +281,7 @@ x<-rep(58832:58931,98)
 y<-rep(48110:48207,each=100)
 xymatrix<-cbind(x,y)
 xymatrix2<-getxyMatrix(changeinmodist,231.6564)
+ 
 xt1<-xymatrix2[,1]
 yt1<-xymatrix2[,2]
 dft1['Var1']<-xt1
@@ -1378,6 +1379,7 @@ return(modis.mt52)
 }
 modis.mt52<-bfastchangepoint(test4ndt)
 load('test4ndt.Rdata')
+
 ###################################################################
 over(modis.mt52,deterpoints)
 

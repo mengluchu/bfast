@@ -36,9 +36,22 @@ return(deterpoints)
 }
 deterpoints<-deterpolygontopoint(x,y)
 deterpoints
-modis.mt52<-bfastchangepoint(test4ndt)
+modis.mt52<-bfastchangepoint(test4nds)
+load('test2ndt.Rdata')
+load('test4nds.Rdata')
+load('test5nds.Rdata')
 load('test5ndt.Rdata')
-modis.mt52<-bfastchangepoint(test5ndt)
+ 
+#p.Vt <- sctest(efp(Vt ~ ti, h=h, type= "OLS-MOSUM"))
+install_github("bfast-1","mengluchu")
+bfast 
+show1(test3nds)
+ 
+
+show1<-function(arr ) {
+filtered1<-neighborsum8(arr)
+modis.mt52<-bfastchangepoint(filtered1)
+ 
 deterpoints2<-c()
 tl=0
 for ( m in  1:155)
@@ -54,11 +67,10 @@ for ( m in  1:155)
   # tl<-tl+(length(unique(xycs[spatialPolygons[m],][modis.mt52,]@coords))/2
   tl2<-tl2+(length(xycs[spatialPolygons[m],][!is.na(over(xycs[spatialPolygons[m],],modis.mt52))]@coords))/2 
 }
-
  
-tl # 1328 797
-#in bfast 1175
 b9<-length(modis.mt52)
+b10<-length(unique(modis.mt52@coords))/2
+ 
 b1<-length( deterpoints) #1898
 b2<-length(which(!is.na(over(deterpoints,modis.mt52)))) #997
 b3<-length(unique(deterpoints[is.na(over(deterpoints,modis.mt52))]@coords))/2  
@@ -69,9 +81,6 @@ b6<-length(unique(modis.mt52[!is.na(over(modis.mt52,deterpoints))]@coords))/2
 b7<-length(which(!is.na(over(modis.mt52,deterpoints)))) #1400/997
 b8<-length(which(is.na(over(modis.mt52,deterpoints))))
 
-paste('total deter points:', b1, 'deterpoints in bfast:', tl2, 'deterpoints not in bfast', tl,'unique deter point not in bfast:',b3,
-      'unique deter points in bfast',b4, 'unique bfast points not in deter', b5, 'unique bfast in deter',b6,'bfast points in deter:',b7,
-      'bfast points not in deter',b8,'total bfast',b9, sep='        ')
 
 
 TP = c(b7,b6, tl2)
@@ -82,23 +91,28 @@ N=22500-P
 TN=N-FP
 ALL=22500
  
-Precition =TP /(TP+FP)
-Sensitivity = TP/P 
+Precition =TP[1:2] /(TP[1:2]+FP)
+Sensitivity = TP[1:2]/P 
 Specifcity = TN/N
-Accuracy= (TP+TN)/ ALL
+Accuracy= (TP[1:2]+TN)/ ALL
+p1<-paste('total deter points:', b1, 'deterpoints in bfast:', tl2, 'deterpoints not in bfast', tl,'unique deter point not in bfast:',b3,
+      'unique deter points in bfast',b4, 'unique bfast points not in deter', b5, 'unique bfast in deter',b6,'bfast points in deter:',b7,
+      'bfast points not in deter',b8,'total bfast',b9, 'unique total bfast',b10,sep='        ')
 
-paste( 'TP',TP[1],TP[2],TP[3],
+p2<-paste( 'TP',TP[1],TP[2],TP[3],
        'FN',FN[1],FN[2],
        'FP', FP[1],FP[2],
        'P',P[1],P[2],
        'N',N[1],N[2],
-       'TN',TN[1],TN[2],
-       
+       'TN',TN[1],TN[2],   
        'Precition', Precition[1],  Precition[2],
        'Sensitivity', Sensitivity[1],Sensitivity[2],
       ' Specificity', Specificity[1] ,Specificity[2],
-      'accuracy',sep=',  ')
+      'accuracy',Accuracy[1], Accuracy[2],sep=',  ')
+print(p1)
+print(p2)
 
+}
 modis.mt52
 #number: 1898 tl:4250 the  way to account for the replication of the polygons would be to do the intercection one polygon by one polygon 
 spatialPolygons[xycs,]
