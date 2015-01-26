@@ -1,5 +1,5 @@
 
-load("fevi20b20.Rdata") #fevi20by20: 20 by 20 subarray of evi values
+load("fevi20b20.Rdata") #fevi20by20: 20 by 20 subarray of evi values 
 
 library(devtools)
 library(strucchange)
@@ -25,7 +25,7 @@ listcn636<-nb2listw(neigh1)
 # {
 #   for (j in 1:18)
 #   {
-i=1;j=18  #i, j can be from 1 to 18    
+i=1;j = 18  #i, j can be from 1 to 18    
 fevi3b3<-fevi20b20[i:(i+2),j:(j+2),]
 fevi3b312t<-apply(fevi3b3,c(1,2),function(x) (ts(x,start=c(2000,1),frequency=46)-stl(ts(x,start=c(2000,1),frequency=46),'per')$time.series[,"seasonal"]))
 f2<-aperm(fevi3b312t,c(2,3,1))
