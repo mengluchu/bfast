@@ -1,16 +1,35 @@
 library(scidb)
 install.packages("bfast", repos="http://R-Forge.R-project.org")
+iquery("save(MOD09Q1_JUARA, '/home/menglu/shared/JUARA.bin', -2, 'dense')")
+
 library("bfast", lib.loc="C:/Users/m_lu0002/Documents/R/win-library/3.1")
 scidbconnect("gis-bigdata.uni-muenster.de", 49974, "meng", "bigdata2014")
 library(scidb)
 scidbconnect("gis-bigdata.uni-muenster.de", 49972, "menglu", "ms3A5Bfn9PCycMr")
-scidbconnect("gis-bigdata.uni-muenster.de", 49962, "menglu", "m7KLKHYKdrQ8fQM")
+
+scidbconnect("gis-bigdata.uni-muenster.de", 49962, "menglu", "m7KLKHYKdrQ8fQM") #enterprise
+
 x <- as.scidb(matrix(rnorm(5000*20),nrow=5000))
 y <- as.scidb(rnorm(5000))
 M <- glm.fit(x, y)
+iquery("list('aggregates')",return=TRUE)
 
 coef(M)[]
 scidblist()
+iquery("load('t1.txt')")
+
+iquery("create array JUARA <red:int16,nir:int16,quality:uint16> [col_id=58828:59679,502,5,row_id=48103:49050,502,5,time_id=0:9200,1,0]")
+iquery("store(build <exposure:double> [i=1:8,1,0,j=1:8,1,0]),trya)")
+ 
+iquery("show(MOD09Q1_JUARA )",return=TRUE)
+
+iquery("load(JUARA,'/home/scidb/shared/JUARA.bin','(int16, int16, unit16)')") 
+
+wiquery("show(t1)",return=TRUE)
+
+iquery("scan(t1)",return=TRUE)
+iquery("window(TEST_ARRAY,1,1,1,1,median(num))",return=TRUE)
+iquery("list('aggregates')",return=TRUE)
 # Using glm (similar to glm)
 # First, let's run a standard glm example from Dobson (1990) Page 93:
 counts <- c(18,17,15,20,10,20,25,13,12)
@@ -514,8 +533,6 @@ length(c(1,NA,1))'
     iquery("insert(project(apply(apply(apply(join(COMWAY, window(COMWAY, 1, 1, 1, 1, sum(val))), sum, val_sum - val),factor,iif((val = 0 and sum != 3), 0,iif((val = 0 or sum = 3), 1,iif(sum < 2, -1,iif(sum > 3,-1,0))))    ),newval, double(val + factor)), newval), COMWAY)")
 
  
- 
-  
- 
-      pa1 <- aggregate(p, vars='NAME_1', sums=list(list(mean, 'ID_2')))
-      pa1
+   
+                     iquery("scan(COMWAY)",return=TRUE)
+
