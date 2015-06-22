@@ -1,11 +1,207 @@
 library(scidb)
 install.packages("bfast", repos="http://R-Forge.R-project.org")
-iquery("save(MOD09Q1_JUARA, '/home/menglu/shared/JUARA.bin', -2, 'dense')")
+
+iquery("save(MOD09Q1_JUARA, '/home/menglu/shared/JUARA1.bin', -2, '(int16, int16, uint16)')")
+
+
+iquery("
+store(
+  project(
+      apply(      
+        repart(
+            apply(
+              subarray(
+              
+              MOD09Q1_JUARA,58828,48103,6,59679,49050,643),
+              evi2,2.5*((nir*0.0001-red*0.0001)/(nir*0.0001+2.4*red*0.0001+1.0))),
+ <red:int16,nir:int16,quality:uint16,evi2:double>[col_id=0:851,3,2,row_id=0:947,3,2,time_id=0:637,638,0]),
+              the_i,double(col_id),the_j,double(row_id),the_t,double(time_id)),
+              the_i, the_j,the_t, evi2),
+              allarray1)")
+       
+ 
+iquery("store(apply(try221b221,evi2,2.5*((nir*0.0001-red*0.0001)/(nir*0.0001+2.4*red*0.0001+1.0))),evi2t221221) ")
+
+iquery("store(repart(evi2t2121, <red:int16,nir:int16,quality:uint16,evi2:double>
+       [col_id=0:20,3,0,row_id=0:20,3,0,time_id=0:637,638,0]),evi2t2121nooverlap3)");
+
+iquery("store(apply(evi2t2121nooverlap3,the_i,double(col_id),the_j,double(row_id),the_t,double(time_id)),tryijt2) ")
+
+
+iquery("store(project(tryijt2, the_i, the_j,the_t, evi2), evi210b210ijt3)")
+
+iquery("show(allarray1)",return=TRUE)
 
 library("bfast", lib.loc="C:/Users/m_lu0002/Documents/R/win-library/3.1")
 scidbconnect("gis-bigdata.uni-muenster.de", 49974, "meng", "bigdata2014")
 library(scidb)
 scidbconnect("gis-bigdata.uni-muenster.de", 49972, "menglu", "ms3A5Bfn9PCycMr")
+scidblist()
+iquery('show(all150150o)',return=TRUE)
+"try221b221"
+iquery("store(repart(evi21b21ijt3, <red:int16,nir:int16,quality:uint16,evi2:double>
+       [col_id=0:20,3,2,row_id=0:20,3,2,time_id=0:637,638,0]),evi21b21o2)");
+iquery("store(subarray(allarray1,0,0,0,848,944,635),all848944o)")
+a<-scidb('all150150o')
+which(is.na(a[,,][]))
+length(
+  a[1:3,1:3,633][]
+ 
+a<-scidb("MOD09Q1_JUARA")
+which(is.na(
+  dim(
+    length(a[58930,48210,6:643][]$red)
+  )
+  )
+  )
+
+#all848944o
+#evi21b21o
+#all150150
+build(<v:int64>[k=0:9999,1000,0],random())
+iquery("store(build(<val:double> [time=0:300,100,20],time),ttrc)")
+iquery("show(ewmann)",return=TRUE)
+a<-scidb("ewmann")
+a[1,0][]
+
+iquery("store(r_exec(apply(ttrc,t,double(time)),
+             'output_attrs=1',
+             'expr=
+    
+    chunk<-as.double(length(t))
+    
+  
+    list(chunk)'),
+      ewmann)
+")
+
+
+iquery("subarray(try221b221,58828,48103,46,58835,48110,56)", `return` = TRUE, afl = TRUE, iterative = FALSE, n = 10000)
+
+time1<-proc.time()
+iquery("store(r_exec(all150150o1,         
+       'output_attrs=2',
+       'expr= 
+       require(bfast)
+       require(strucchange)
+       require(spdep)
+       load(\"/home/menglu/listcn636.Rdata\")
+       sarsarbfastt1<-array(, 636)
+       sarsarbfasts1<-array(, 636)
+       
+       eviarray<-array(evi2,c(636,3,3))          # scidb array to r array                
+       eviarray2<-aperm(eviarray,c(2,3,1))
+       bfa <-try(bfastsar(eviarray2, season= \"harmonic\",max.iter=1 ))       
+       
+    if(class(bfa) == \"try-error\") 
+    {
+     sarsarbfastt1[1:636]<- 1
+      sarsarbfasts1[1:636]<- 1
+      
+    }   else if (bfa$nobp$Vt == FALSE) 
+    {
+       bkpttr <- as.integer(bfa$output[[1]]$Vt.bp) #   of 16 days e.g. year=16*50/365
+       sarsarbfastt1[ bkpttr]<-100
+    }  else if (bfa$nobp$Wt == FALSE) 
+    {
+       bkptse <- as.integer(bfa$output[[1]]$Wt.bp)
+       sarsarbfasts1[ bkptse]<-200
+    } else  {
+       sarsarbfastt1[1:636]<-2
+       sarsarbfastt1[1:636]<-2
+    }     
+       sarsarbfastt1[which(is.na(sarsarbfastt1))]<-0 
+       sarsarbfasts1[which(is.na(sarsarbfasts1))]<-0 
+       sarsarbfastt1<-as.data.frame.table (sarsarbfastt1)$Freq  
+       sarsarbfasts1<-as.data.frame.table (sarsarbfasts1)$Freq  
+      list( sarsarbfastt1,sarsarbfasts1)'),rexe4)",return=TRUE) 
+
+time3<-proc.time()-time1
+time3
+user    system   elapsed 
+4.93      3.72 164359.90 
+a<-scidb("rexe3")
+a[1,1][]
+
+iquery("store(r_exec(all2121o,         
+       'output_attrs=2',
+       'expr= 
+        require(bfast)
+        require(strucchange)
+        require(spdep)
+        load(\"/home/menglu/listcn636.Rdata\")
+        sarsarbfastt1<-array(,c(3,3,636))
+        sarsarbfasts1<-array(,c(3,3,636))
+        
+        eviarray<-array(evi2,c(636,3,3))          # scidb array to r array                
+        eviarray2<-aperm(eviarray,c(2,3,1))
+        bfa <-bfastsar(eviarray2, season= \"harmonic\",max.iter=1 )       
+
+        if (bfa$nobp$Vt == FALSE) 
+        {
+        bkpttr <- as.integer(bfa$output[[1]]$Vt.bp) #   of 16 days e.g. year=16*50/365
+        sarsarbfastt1[2,2,bkpttr]<-100
+        } 
+        
+        if (bfa$nobp$Wt == FALSE) 
+        {
+         bkptse <- as.integer(bfa$output[[1]]$Wt.bp)
+         sarsarbfasts1[2,2,bkptse]<-200
+        } else  {
+         bkpttr<-0
+         bkptse<-0
+                }     
+ sarsarbfastt1[which(is.na(sarsarbfastt1))]<-0 
+ sarsarbfasts1[which(is.na(sarsarbfasts1))]<-0 
+ sarsarbfastt1<-as.data.frame.table (sarsarbfastt1)$Freq  
+ sarsarbfasts1<-as.data.frame.table (sarsarbfasts1)$Freq  
+      sarsarbfastt1,sarsarbfasts1)'),rexe3)",return=TRUE) 
+
+
+
+
+
+
+load("/home/menglu/listcn636.Rdata")
+        sarsarbfastt1<-array(,c(148,148,636))
+        sarsarbfasts1<-array(,c(148,148,636))
+        636*9
+        eviarray<-array(rnorm(5724),c(636,3,3))          # scidb array to r array                
+        eviarray2<-aperm(eviarray,c(2,3,1))
+        bfas <-bfastsar(eviarray2, season= "harmonic",max.iter=1 )       
+
+        if (bfa$nobp$Vt == FALSE) 
+        {
+        bkpttr <- as.integer(bfa$output[[1]]$Vt.bp) #   of 16 days e.g. year=16*50/365
+        sarsarbfastt1[the_i,the_j,bkpttr]<-100
+        } 
+        
+        if (bfa$nobp$Wt == FALSE) 
+        {
+         bkptse <- as.integer(bfa$output[[1]]$Wt.bp)
+         sarsarbfasts1[the_i,the_j,bkptse]<-200
+        } else  {
+         bkpttr<-0
+         bkptse<-0
+                }     
+ sarsarbfastt1[which(is.na(sarsarbfastt1))]<-0 
+ sarsarbfasts1[which(is.na(sarsarbfasts1))]<-0 
+
+
+
+
+iquery("store(r_exec(t7,         
+       'output_attrs=1',
+       'expr= 
+       require(bfast)
+       require(strucchange)
+       require(spdep)
+       load(\"/home/menglu/listcn636.Rdata\")
+ 
+        output2 <-bfastsar(array(rnorm(5764),c(3,3,636)), season= \"harmonic\",max.iter=1 )       
+      # output2<-bfast(ts(1:636,start=2001,frequency=46)  , season= \"harmonic\",max.iter=1  )
+        a<-as.double(output2[1]$Yt)
+       list(a  )'),rexe2)",return=TRUE)       
 
 scidbconnect("gis-bigdata.uni-muenster.de", 49962, "menglu", "m7KLKHYKdrQ8fQM") #enterprise
 
@@ -19,11 +215,12 @@ scidblist()
 iquery("load('t1.txt')")
 
 iquery("create array JUARA <red:int16,nir:int16,quality:uint16> [col_id=58828:59679,502,5,row_id=48103:49050,502,5,time_id=0:9200,1,0]")
+
 iquery("store(build <exposure:double> [i=1:8,1,0,j=1:8,1,0]),trya)")
  
 iquery("show(MOD09Q1_JUARA )",return=TRUE)
 
-iquery("load(JUARA,'/home/scidb/shared/JUARA.bin','(int16, int16, unit16)')") 
+iquery("load(JUARA,'/home/scidb/shared/JUARA.bin','(int16, int16, uint16)')") 
 
 wiquery("show(t1)",return=TRUE)
 
@@ -58,8 +255,7 @@ save(glm.D93_sci, file="my_model.rdata")
 #MOD09Q1_JUARA
 scidblist()
 scidbversion()
-iquery("subarray(MOD09Q1_MENG_20140416,58828,48103,46,58835,48110,56)", `return` = TRUE, afl = TRUE, iterative = FALSE, n = 10000)
- 
+
 
 iquery("load_library('dense_linear_algebra')", release=1,resp=FALSE)
 iquery("load_library('linear_algebra')", release=1,resp=FALSE)
