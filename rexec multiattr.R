@@ -1,6 +1,6 @@
 
 #all array 1; get the whole array of evi2 with array dimensions also as attribute, array chunk overlap is 2
-
+#sample region in in paper: x=c(58930:59079),y=c(48210:48359)
 iquery("
        store(
        project(
